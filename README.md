@@ -90,6 +90,74 @@ Portainer Web UI：
 | `ROBOFLOW_DEDUP_IOU` | 本地 bbox 去重阈值，默认 `0.55` |
 | `ROBOFLOW_CLASS_MAP` | 可选，手动 class map，例如 `{\"east\":\"1z\"}` |
 | `APP_PORT` | 宿主机映射端口，默认 `5174` |
+| `CLOUDFLARED_TOKEN` | 可选，Cloudflare Tunnel token。只在 `docker-compose.cloudflare.yml` 中使用 |
+
+## Cloudflare HTTPS
+
+想让浏览器实时摄像头可用，最省事的是 Cloudflare Tunnel。它不需要路由器开端口，
+也不需要你自己签证书；`cloudflared` 从树莓派主动连到 Cloudflare，浏览器访问你的
+域名时拿到有效 HTTPS。
+
+Cloudflare 官方 Docker 示例使用：
+
+```bash
+docker run cloudflare/cloudflared:latest tunnel --no-autoupdate run --token <TUNNEL_TOKEN>
+```
+
+本项目已经提供等价的 `docker-compose.cloudflare.yml`。
+
+### Cloudflare 控制台
+
+1. 登录 Cloudflare Zero Trust。
+2. 进入 `Networks` -> `Tunnels`。
+3. `Create a tunnel`。
+4. Connector 选 `cloudflared`。
+5. 环境选 `Docker`。
+6. 复制生成命令里的 token，也就是 `--token` 后面那一长串。
+7. 给 Tunnel 添加 Public Hostname：
+   - Subdomain: 例如 `mahjong`
+   - Domain: 你的域名
+   - Type: `HTTP`
+   - URL: `http://riichi-vision-agent:5174`
+
+注意这里填的是 Docker Compose 内部服务名，不是树莓派 IP。
+
+### Portainer
+
+新建或编辑 stack：
+
+- Repository URL:
+
+```text
+https://github.com/Friedrich-233/mahjang_agent.git
+```
+
+- Compose path:
+
+```text
+docker-compose.cloudflare.yml
+```
+
+- Environment variables 至少填：
+
+```text
+APP_PORT=5174
+ROBOFLOW_API_KEY=你的 Roboflow key
+ROBOFLOW_MODEL=https://universe.roboflow.com/tecky-nx4vn/mahjong-9xjry/model/1
+ROBOFLOW_BASE_URL=https://serverless.roboflow.com
+ROBOFLOW_CONFIDENCE=30
+ROBOFLOW_OVERLAP=30
+ROBOFLOW_DEDUP_IOU=0.55
+CLOUDFLARED_TOKEN=你的 Cloudflare tunnel token
+```
+
+部署后访问：
+
+```text
+https://mahjong.你的域名
+```
+
+这时 `开启摄像头` 应该可以正常弹浏览器权限。
 
 ## 视觉区域约定
 
