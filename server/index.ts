@@ -16,7 +16,7 @@ const {
 } = process.env;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const port = Number(APP_PORT ?? PORT) || 5173;
+const port = Number(APP_PORT ?? PORT) || 5174;
 const distDir = DIST_DIR || path.resolve(__dirname, '..', 'dist');
 const roboflowBaseUrl =
   ROBOFLOW_BASE_URL?.replace(/\/+$/, '') || 'https://serverless.roboflow.com';

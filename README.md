@@ -23,7 +23,7 @@ cp .env.example .env
 ```bash
 ROBOFLOW_API_KEY=你的_key
 ROBOFLOW_MODEL=https://universe.roboflow.com/tecky-nx4vn/mahjong-9xjry/model/1
-APP_PORT=5173
+APP_PORT=5174
 ```
 
 开两个终端：
@@ -36,7 +36,7 @@ npm run server:dev
 npm run dev
 ```
 
-浏览器打开 Vite 输出的地址，通常是 `http://localhost:5173`。开发时 `/api/*` 会代理到 `8788` 后端。
+浏览器打开 Vite 输出的地址，通常是 `http://localhost:5174`。开发时 `/api/*` 会代理到 `8788` 后端。
 
 ## 使用方式
 
@@ -66,7 +66,7 @@ docker compose up -d --build
 同一 Wi-Fi 下访问：
 
 ```text
-http://树莓派IP:5173
+http://树莓派IP:5174
 ```
 
 Portainer Web UI：
@@ -89,7 +89,7 @@ Portainer Web UI：
 | `ROBOFLOW_OVERLAP` | YOLO overlap，默认 `30` |
 | `ROBOFLOW_DEDUP_IOU` | 本地 bbox 去重阈值，默认 `0.55` |
 | `ROBOFLOW_CLASS_MAP` | 可选，手动 class map，例如 `{\"east\":\"1z\"}` |
-| `APP_PORT` | 宿主机映射端口，默认 `5173` |
+| `APP_PORT` | 宿主机映射端口，默认 `5174` |
 
 ## 视觉区域约定
 

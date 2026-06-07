@@ -10,7 +10,7 @@ FROM node:22-bookworm-slim AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
-ENV APP_PORT=5173
+ENV APP_PORT=5174
 ENV DIST_DIR=/app/dist
 
 COPY package*.json ./
@@ -18,5 +18,5 @@ RUN npm install --omit=dev
 COPY --from=build /app/dist ./dist
 COPY server ./server
 
-EXPOSE 5173
+EXPOSE 5174
 CMD ["npm", "run", "start"]
