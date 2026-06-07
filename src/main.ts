@@ -35,8 +35,11 @@ const escapeHtml = (value: string): string =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
+const tileImageSrc = (tile: TileCode): string =>
+  `/tiles/light/${encodeURIComponent(tile)}.svg`;
+
 const renderTile = (tile: TileCode, strong = false): string =>
-  `<span class="tile ${tile[0] === '0' ? 'red' : ''} ${strong ? 'strong' : ''}">${escapeHtml(tileLabel(tile))}</span>`;
+  `<span class="tile ${strong ? 'strong' : ''}" title="${escapeHtml(tileLabel(tile))}"><img src="${tileImageSrc(tile)}" alt="${escapeHtml(tileLabel(tile))}" loading="lazy" /></span>`;
 
 const renderTiles = (tiles: TileCode[], empty = '无'): string =>
   tiles.length === 0

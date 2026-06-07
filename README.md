@@ -143,6 +143,7 @@ https://mahjong.你的域名
 
 - AI 算法参考：[shinkuan/Akagi](https://github.com/shinkuan/Akagi) 的分析器设计思想。Akagi 使用 Apache-2.0 License。
 - YOLO 模型默认使用 Roboflow Universe: `mahjong-9xjry/1`。
+- 麻将牌图来自 [FluffyStuff/riichi-mahjong-tiles](https://github.com/FluffyStuff/riichi-mahjong-tiles)，使用 CC BY 4.0 License。
 
 ## License
 
