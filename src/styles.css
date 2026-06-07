@@ -226,6 +226,10 @@ video {
   line-height: 1.45;
 }
 
+.hint.compact {
+  padding: 0;
+}
+
 .ok {
   color: #1c6842;
   font-weight: 650;

@@ -65,6 +65,9 @@ const zoneLabel = (zone: Zone): string => {
 const windLabel = (wind: AgentState['roundWind']): string =>
   ({ east: '东', south: '南', west: '西', north: '北' })[wind];
 
+const liveCameraAvailable = (): boolean =>
+  Boolean(window.isSecureContext && navigator.mediaDevices?.getUserMedia);
+
 const seatLabel = (seat: keyof AgentState['rivers']): string =>
   ({ self: '自己', left: '下家/左侧', across: '对家', right: '上家/右侧' })[
     seat
@@ -173,6 +176,7 @@ const renderMelds = (): string =>
 
 const render = (): void => {
   const doraText = tilesToMpsz(agentState.doraIndicators);
+  const cameraAvailable = liveCameraAvailable();
   app.innerHTML = `
     <div class="shell">
       <header>
@@ -189,10 +193,15 @@ const render = (): void => {
         <div class="camera-box">
           <video id="camera" autoplay playsinline muted></video>
           <div class="camera-actions">
-            <button id="start-camera">开启摄像头</button>
-            <button id="capture-hand" ${busy ? 'disabled' : ''}>扫描我的手牌</button>
-            <button id="capture-table" ${busy ? 'disabled' : ''}>观察牌桌</button>
+            <button id="start-camera" ${cameraAvailable ? '' : 'disabled'}>开启摄像头</button>
+            <button id="capture-hand" ${busy || !cameraAvailable ? 'disabled' : ''}>扫描我的手牌</button>
+            <button id="capture-table" ${busy || !cameraAvailable ? 'disabled' : ''}>观察牌桌</button>
           </div>
+          ${
+            cameraAvailable
+              ? ''
+              : '<p class="hint compact">实时摄像头需要 HTTPS 或 localhost。当前访问方式不可用时，请用右侧“扫描手牌照片 / 观察牌桌照片”。</p>'
+          }
         </div>
         <div class="upload-box">
           <label>
@@ -304,6 +313,12 @@ const handleDetection = async (file: File, mode: CaptureMode): Promise<void> => 
 };
 
 const fileFromCamera = async (): Promise<File | null> => {
+  if (!liveCameraAvailable()) {
+    errorMessage =
+      '实时摄像头需要 HTTPS 或 localhost。当前请使用“扫描手牌照片 / 观察牌桌照片”，或改用 HTTPS 域名访问。';
+    render();
+    return null;
+  }
   const video = document.querySelector<HTMLVideoElement>('#camera');
   if (video === null || video.videoWidth === 0 || video.videoHeight === 0) {
     errorMessage = '摄像头还没有画面。请先开启摄像头，或使用照片上传。';
@@ -324,6 +339,12 @@ const fileFromCamera = async (): Promise<File | null> => {
 };
 
 const startCamera = async (): Promise<void> => {
+  if (!liveCameraAvailable()) {
+    errorMessage =
+      '实时摄像头需要 HTTPS 或 localhost。局域网 HTTP 下浏览器会隐藏 navigator.mediaDevices；请先用照片上传，或通过 HTTPS 域名访问。';
+    render();
+    return;
+  }
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: { ideal: 'environment' } },
