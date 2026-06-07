@@ -194,13 +194,13 @@ const render = (): void => {
           <video id="camera" autoplay playsinline muted></video>
           <div class="camera-actions">
             <button id="start-camera" ${cameraAvailable ? '' : 'disabled'}>开启摄像头</button>
-            <button id="capture-hand" ${busy || !cameraAvailable ? 'disabled' : ''}>扫描我的手牌</button>
-            <button id="capture-table" ${busy || !cameraAvailable ? 'disabled' : ''}>观察牌桌</button>
+            <button id="capture-hand" ${busy ? 'disabled' : ''}>扫描我的手牌</button>
+            <button id="capture-table" ${busy ? 'disabled' : ''}>观察牌桌</button>
           </div>
           ${
             cameraAvailable
               ? ''
-              : '<p class="hint compact">实时摄像头需要 HTTPS 或 localhost。当前访问方式不可用时，请用右侧“扫描手牌照片 / 观察牌桌照片”。</p>'
+              : '<p class="hint compact">实时摄像头需要 HTTPS 或 localhost。当前按钮会改用拍照/上传。</p>'
           }
         </div>
         <div class="upload-box">
@@ -382,12 +382,20 @@ const wireEvents = (): void => {
   });
   document.querySelector('#capture-hand')?.addEventListener('click', () => {
     void (async () => {
+      if (!liveCameraAvailable()) {
+        document.querySelector<HTMLInputElement>('#hand-file')?.click();
+        return;
+      }
       const file = await fileFromCamera();
       if (file !== null) await handleDetection(file, 'hand');
     })();
   });
   document.querySelector('#capture-table')?.addEventListener('click', () => {
     void (async () => {
+      if (!liveCameraAvailable()) {
+        document.querySelector<HTMLInputElement>('#table-file')?.click();
+        return;
+      }
       const file = await fileFromCamera();
       if (file !== null) await handleDetection(file, 'table');
     })();
